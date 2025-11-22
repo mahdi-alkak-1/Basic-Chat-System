@@ -1,4 +1,5 @@
 <?php
+require_once('../config/connection.php');
 $sql = "
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
