@@ -1,8 +1,8 @@
 <?php
 require_once __DIR__ . '/Model.php';
-require_once __DIR__ . '/../services/ResponseService.php';
 
-class Message extends Model{
+class Message extends Model {
+
     private int $id;
     private int $conversation_id;
     private int $sender_id;
@@ -24,68 +24,89 @@ class Message extends Model{
         }
     }
 
-    public function getId(): int        { return $this->id; }
-    public function getConversationId(): int    { return $this->conversation_id; }
-    public function getSenderId(): string   { return $this->sender_id; }
-    public function getText(): string { return $this->body; }
-    public function getSentAt(): string   { return $this->sent_at; }
-    public function getDeliveredAt(): string   { return $this->delivered_at; }
-    public function getReadAt(): string   { return $this->read_at; }
+    // ==== GETTERS ====
 
-    public static function sendMessage(mysqli $connection, int $conversationId, int $senderId,string $text){
-        $sql = sprintf('INSERT INTO messages conversation_id, sender_id,body,sent_at VALUES (?,?,?');
+    public function getId(): int { return $this->id; }
+    public function getConversationId(): int { return $this->conversation_id; }
+    public function getSenderId(): int { return $this->sender_id; }
+    public function getText(): string { return $this->body; }
+    public function getSentAt(): ?string { return $this->sent_at; }
+    public function getDeliveredAt(): ?string { return $this->delivered_at; }
+    public function getReadAt(): ?string { return $this->read_at; }
+
+
+    // ==== INSERT MESSAGE ====
+
+    public static function sendMessage(mysqli $connection, int $conversationId, int $senderId, string $text): bool {
+
+        $sql = "
+            INSERT INTO messages (conversation_id, sender_id, body, sent_at)
+            VALUES (?, ?, ?, NOW())
+        ";
+
         $query = $connection->prepare($sql);
-        $query->bind_param('iis', $conversationId,$senderId,$text);
-        
-        if($query->execute()){
-            return ResponseService::response(200, 'Message sent successfully');
-        }
+        $query->bind_param('iis', $conversationId, $senderId, $text);
+
+        return $query->execute();
     }
 
-    public static function getMessages(mysqli $connection, int $conversationId){
-        $sql = sprintf('SELECT * FROM messages WHERE conversation_id = ? ORDER BY id ASC');
+
+    // ==== GET ALL MESSAGES ====
+
+    public static function getMessages(mysqli $connection, int $conversationId): array {
+
+        $sql = "SELECT * FROM messages WHERE conversation_id = ? ORDER BY id ASC";
+
         $query = $connection->prepare($sql);
         $query->bind_param('i', $conversationId);
         $query->execute();
 
         $res = $query->get_result();
-        $messages = [];
 
-        while($row = $res->fetch_assoc()){
+        $messages = [];
+        while ($row = $res->fetch_assoc()) {
             $messages[] = new Message($row);
         }
+
         return $messages;
     }
 
-    public static function markDelivered(mysqli $connection, int $conversationId, int $userId){
-        $sql = sprintf('UPDATE messages 
-                        SET delivered_at = NOW()
-                        WHERE conversation_id = ? 
-                        AND sender_id != ?
-                        AND delivered_at IS NULL');
+
+    // ==== MARK AS DELIVERED ====
+
+    public static function markDelivered(mysqli $connection, int $conversationId, int $userId): bool {
+
+        $sql = "
+            UPDATE messages
+            SET delivered_at = NOW()
+            WHERE conversation_id = ?
+            AND sender_id != ?
+            AND delivered_at IS NULL
+        ";
 
         $query = $connection->prepare($sql);
-        $query->bind_param('ii', $conversation_id,$userId);
-        if($query->execute()){
-            return ResponseService::response(200,'message is Delivered');
-        }
+        $query->bind_param('ii', $conversationId, $userId);
+
+        return $query->execute();
     }
 
-    public static function markRead(mysqli $connection, int $conversationId, int $userId){
-        $sql = sprintf('UPDATE messages 
-                        SET read_at = NOW()
-                        WHERE conversation_id = ? 
-                        AND sender_id != ?
-                        AND read_at IS NULL');
+
+    // ==== MARK AS READ ====
+
+    public static function markRead(mysqli $connection, int $conversationId, int $userId): bool {
+
+        $sql = "
+            UPDATE messages
+            SET read_at = NOW()
+            WHERE conversation_id = ?
+            AND sender_id != ?
+            AND read_at IS NULL
+        ";
 
         $query = $connection->prepare($sql);
-        $query->bind_param('ii', $conversation_id,$userId);
-        if($query->execute()){
-            return ResponseService::response(200,'message is read');
-        }
+        $query->bind_param('ii', $conversationId, $userId);
+
+        return $query->execute();
     }
 }
-
-
-
 ?>

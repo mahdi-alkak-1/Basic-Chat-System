@@ -94,6 +94,5 @@ abstract class Model{
         if(!$query){return "fail to delete";
         }
     }
-
 }
 ?>
