@@ -8,7 +8,8 @@ $data = json_decode($input, true);
 
 $email = $data['email'] ?? null;
 $password = $data['password'] ?? null;
-    
+
+
 if($email === null || $password === null){
     echo ResponseService::response(400, "Email or password missing");
     exit;

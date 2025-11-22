@@ -3,7 +3,6 @@
 
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/ResponseService.php';
-
 class AuthService
 {
     public static function registerUser(mysqli $connection, string $email, string $password)
@@ -52,7 +51,7 @@ class AuthService
             'email' => $user->getEmail(),
             'token' => $user->getAuthToken(),
         ];
-
+    
         return ResponseService::response(200, "Loging Successful", $userData);
     }
 
@@ -68,7 +67,7 @@ class AuthService
         if (!$row) {
             return null;
         }
-
+        
         return new User($row);
     }
 }
