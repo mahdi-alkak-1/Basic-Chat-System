@@ -17,7 +17,7 @@ $query = $connection->prepare($sql);
 
 $query->execute();
 if(!$query){
-    echo"error in creating users table";
+    echo"error in creating ai summeries table";
 }else{
-    echo"users table created succ";
+    echo"ai summeries table created succ";
 }
