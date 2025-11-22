@@ -31,7 +31,7 @@ class AuthService
             'token' => $token,
         ];
 
-        return ResponseService::response(201, "User registered", $userData);
+        return ResponseService::response(200, "User registered", $userData);
     }
 
     public static function loginUser(mysqli $connection, string $email, string $password)
