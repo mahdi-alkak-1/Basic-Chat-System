@@ -23,7 +23,7 @@ async function login() {
 
         const userData  = response.data.data;
         if (response.data.status === 200) {
-            localStorage.setItem("id", userData.id)
+            localStorage.setItem("user_id", userData.id)
             localStorage.setItem("token", userData.token);
             window.location.href = "chat.html";
         } else {
