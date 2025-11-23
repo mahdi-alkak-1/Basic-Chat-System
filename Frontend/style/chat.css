@@ -69,3 +69,22 @@ body {
     border-radius: 8px;
     cursor: pointer;
 }
+#header-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.header-btn {
+    padding: 7px 14px;
+    border: none;
+    background: #ffffff33;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+.header-btn:hover {
+    background: #ffffff55;
+}
