@@ -1,158 +1,212 @@
-
+// ===============================
+// AUTH CHECK
+// ===============================
 const token = localStorage.getItem("token");
-if (!token) {
-    window.location.href = "login.html";
-}
+if (!token) window.location.href = "login.html";
+
+let conversationId = localStorage.getItem("conversation_id") || null;
+let currentUserId = localStorage.getItem("user_id");
+
+// DOM
+const messagesBox = document.getElementById("messages-box");
+const chatWith = document.getElementById("chat-with");
+const conversationList = document.getElementById("conversation-list");
 
 
-let conversationId = localStorage.getItem("conversation_id");
-
-if (!conversationId) {
-    alert("Start a chat first!");
-    window.location.href = "start_chat.html";
-}
+// ===============================
+// LOAD USER EMAIL
+// ===============================
+document.getElementById("my-email").innerText = localStorage.getItem("email") || "";
 
 
-
-
-// SEND MESSAGE
-async function sendMessage() {
-    const text = document.getElementById("messageInput").value.trim();
-    if (text === "") return;
-
-    try {
-        const response = await axios.post(
-            "../backend/public/send_message.php",
-            {
-                conversation_id: conversationId,
-                message: text
-            },
-            {
-                headers: { "X-Auth-Token": token }
-            }
-        );
-
-        if (response.data.status === 200) {
-            displayMessage(text, "me");
-            document.getElementById("messageInput").value = "";
-        } else {
-            console.log("Error:", response.data.message);
-        }
-
-    } catch (error) {
-        console.log("Server error:", error);
-    }
-}
-
-
-
-
-// DISPLAY MESSAGE IN UI
-function displayMessage(text, sender) {
-    const box = document.getElementById("messages-box");
-
-    const bubble = document.createElement("div");
-    bubble.className = sender === "me" ? "bubble me" : "bubble them";
-    bubble.innerText = text;
-
-    box.appendChild(bubble);
-    box.scrollTop = box.scrollHeight;
-}
-
-
-
-
-// LOGOUT
-function logout() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user_id");
-    localStorage.removeItem("conversation_id"); // very important
-    window.location.href = "login.html";
-}
-
-
-
-
-// LOAD MESSAGES
-async function loadMessages() {
+// ===============================
+// LOAD ALL CONVERSATIONS
+// ===============================
+// ⚠️ Only call /conversation/list IF you add it in routes
+async function loadConversations() {
     try {
         const resp = await axios.get(
-            "../backend/public/get_messages.php?conversation_id=" + conversationId,
-            {
-                headers: { "X-Auth-Token": token }
-            }
+            "../Backend/public/index.php?route=/conversation/list",
+            { headers: { "X-Auth-Token": token } }
         );
 
-        if (resp.data.status == 200) {
-            const msgs = resp.data.messages;
+        if (resp.data.status !== 200) return;
 
-            msgs.forEach(msg => {
-                const sender =
-                    msg.sender_id == localStorage.getItem("user_id")
-                        ? "me"
-                        : "them";
+        conversationList.innerHTML = "";
 
-                displayMessage(msg.text, sender);
-            });
+        resp.data.data.conversations.forEach(conv => {
+            const div = document.createElement("div");
+            div.className = "conversation-item";
+            if (conv.id == conversationId) div.classList.add("active-chat");
 
-        } else {
-            console.log("Error loading messages");
-        }
+            div.innerText = conv.other_email;
+            div.onclick = () => selectConversation(conv.id, conv.other_email);
+
+            conversationList.appendChild(div);
+        });
 
     } catch (error) {
-        console.log("Server error:", error);
+        console.log("Conversation list error:", error);
     }
 }
 
-// Load on first page open
-loadMessages();
 
+// ===============================
+// SELECT CONVERSATION
+// ===============================
+function selectConversation(id, email) {
+    conversationId = id;
+    localStorage.setItem("conversation_id", id);
 
+    chatWith.innerText = email;
 
-// REFRESH CHAT MANUALLY
-async function refreshChat() {
-    const box = document.getElementById("messages-box");
-    box.innerHTML = ""; // clear UI
+    messagesBox.innerHTML = "";
 
-    await loadMessages(); // reload messages
+    loadMessages();
+    loadConversations();
 }
 
 
+// ===============================
+// LOAD MESSAGES
+// ===============================
+async function loadMessages() {
+    if (!conversationId) return;
 
-// CHANGE CHAT (Switch to another email)
+    try {
+        const resp = await axios.get(
+            "../Backend/public/index.php?route=/messages/list&conversation_id=" + conversationId,
+            { headers: { "X-Auth-Token": token } }
+        );
 
-async function changeChat() {
-    const email = prompt("Enter the email of the user you want to chat with:");
-    if (!email) return;
+        if (resp.data.status !== 200) return;
+
+        messagesBox.innerHTML = "";
+        console.log(resp.data.data.messages);
+        resp.data.data.messages.forEach(msg => {
+            const sender = msg.sender_id == currentUserId ? "me" : "them";
+            displayMessage(msg.text, sender, msg);
+        });
+
+        markDelivered();
+        markRead();
+
+    } catch (error) {
+        console.log("Load messages error:", error);
+    }
+}
+
+
+// ===============================
+// SEND MESSAGE
+// ===============================
+async function sendMessage() {
+    const text = document.getElementById("messageInput").value.trim();
+    if (!text) return;
 
     try {
         const resp = await axios.post(
-            "../backend/public/start_conversation.php",
-            { email: email },
+            "../Backend/public/index.php?route=/messages/send",
+            { conversation_id: conversationId, message: text },
             { headers: { "X-Auth-Token": token } }
         );
 
         if (resp.data.status === 200) {
-            const newId = resp.data.conversation_id;
-
-            // Save new conversation
-            localStorage.setItem("conversation_id", newId);
-            conversationId = newId; // update variable
-
-            document.getElementById("chat-with").innerText = email;
-
-            // Clear UI
-            document.getElementById("messages-box").innerHTML = "";
-
-            // Load the new chat
-            loadMessages();
-
-        } else {
-            alert(resp.data.message);
+            displayMessage(text, "me");
+            document.getElementById("messageInput").value = "";
         }
 
     } catch (error) {
-        console.log(error);
-        alert("Error changing chat");
+        console.log("Send message error:", error);
     }
 }
+
+function displayMessage(text, sender, msg = null) {
+    const bubble = document.createElement("div");
+    bubble.className = "bubble " + sender;
+
+    bubble.innerText = text;
+
+    // Add ticks only for messages YOU sent
+    if (sender === "me") {
+        const tick = document.createElement("div");
+        tick.className = "tick";
+
+        if (msg?.read_at) tick.innerHTML = "✔✔";          // read
+        else if (msg?.delivered_at) tick.innerHTML = "✔✔"; // delivered
+        else tick.innerHTML = "✔";                         // sent
+
+        bubble.appendChild(tick);
+    }
+
+    messagesBox.appendChild(bubble);
+    messagesBox.scrollTop = messagesBox.scrollHeight;
+}
+
+// ===============================
+// MARK DELIVERED + READ
+// ===============================
+async function markDelivered() {
+    await axios.post(
+        "../Backend/public/index.php?route=/messages/mark-delivered",
+        { conversation_id: conversationId },
+        { headers: { "X-Auth-Token": token } }
+    );
+}
+
+async function markRead() {
+    await axios.post(
+        "../Backend/public/index.php?route=/messages/mark-read",
+        { conversation_id: conversationId },
+        { headers: { "X-Auth-Token": token } }
+    );
+}
+
+
+// ===============================
+// BUTTONS
+// ===============================
+async function refreshChat() {
+    messagesBox.innerHTML = "";
+    await loadMessages();
+}
+
+async function startNewChat() {
+    const email = prompt("Enter user email:");
+    if (!email) return;
+
+    try {
+        const resp = await axios.post(
+            "../Backend/public/index.php?route=/conversation/start",
+            { email },
+            { headers: { "X-Auth-Token": token } }
+        );
+
+        if (resp.data.status === 200) {
+            conversationId = resp.data.data.conversation_id;
+            localStorage.setItem("conversation_id", conversationId);
+
+            chatWith.innerText = email;
+            messagesBox.innerHTML = "";
+
+            loadConversations();
+            loadMessages();
+        }
+
+    } catch (e) {
+        console.log(e);
+        alert("Error starting chat");
+    }
+}
+
+function logout() {
+    localStorage.clear();
+    window.location.href = "login.html";
+}
+
+
+// ===============================
+// INITIAL LOAD
+// ===============================
+loadConversations();
+if (conversationId) loadMessages();
