@@ -1,33 +1,45 @@
+// AUTH CHECK
 const token = localStorage.getItem("token");
-if (!token) {
-    window.location.href = "login.html";
+if (!token) window.location.href = "login.html";
+
+// Fix optional chaining error
+const myEmail = document.getElementById("my-email");
+if (myEmail) {
+    myEmail.innerText = localStorage.getItem("email");
 }
 
+// ------------------------------
+// START CHAT
+// ------------------------------
 async function startChat() {
     const email = document.getElementById("otherEmail").value.trim();
-    if (!email) return alert("Enter email!");
+    if (!email) return alert("Enter an email");
 
     try {
         const resp = await axios.post(
-            "../backend/public/start_conversation.php",
-            { email: email },
+            "../Backend/public/index.php?route=/conversation/start",
+            { email },
             { headers: { "X-Auth-Token": token } }
         );
 
         if (resp.data.status === 200) {
-            const conversationId = resp.data.conversation_id;
-
-            // Save for use inside chat page
-            localStorage.setItem("conversation_id", conversationId);
-
-            // Redirect to chat
+            const cid = resp.data.data.conversation_id;
+            localStorage.setItem("conversation_id", cid);
             window.location.href = "chat.html";
         } else {
             alert(resp.data.message);
         }
 
-    } catch (e) {
-        console.log(e);
+    } catch (error) {
+        console.log(error);
         alert("Server error");
     }
+}
+
+// ------------------------------
+// LOGOUT
+// ------------------------------
+function logout() {
+    localStorage.clear();
+    window.location.href = "login.html";
 }

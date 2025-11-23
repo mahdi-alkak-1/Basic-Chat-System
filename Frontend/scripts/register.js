@@ -1,42 +1,26 @@
 async function registerUser() {
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
-    const confirm = document.getElementById("confirm").value.trim();
-    const error = document.getElementById("error");
 
-    error.innerText = ""; // clear errors
-
-    if (!email || !password || !confirm) {
-        error.innerText = "All fields required.";
-        return;
-    }
-
-    if (password !== confirm) {
-        error.innerText = "Passwords do not match.";
-        return;
+    if (!email || !password) {
+        return alert("Please fill all fields");
     }
 
     try {
-        const response = await axios.post(
-            "../backend/auth/register.php",
-            {   email: email,
-                password: password },
-            {
-                headers: { 'Content-Type': 'application/json'},
-            }
+        const resp = await axios.post(
+            "../Backend/public/index.php?route=/auth/register",
+            { email, password }
         );
 
-         console.log(response.data); 
-         
-        if (response.data.status === 200) {
+        if (resp.data.status === 200) {
             alert("Account created! Login now.");
             window.location.href = "login.html";
         } else {
-            error.innerText = response.data.message;
+            alert(resp.data.message);
         }
 
-    } catch (err) {
-        error.innerText = "Server error.";
-        console.log(err);
+    } catch (error) {
+        console.log(error);
+        alert("Server error");
     }
 }

@@ -1,20 +1,29 @@
 <!DOCTYPE html>
 <html>
-<head>  
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style/chat.css">
+    <link rel="stylesheet" href="style/start_chat.css">
     <title>Start Chat</title>
 </head>
-
 <body>
 
-    <h2>Start a Chat</h2>
+<div class="container">
 
-    <input type="text" id="otherEmail" placeholder="Enter user email">
-    <button onclick="startChat()">Start Chat</button>
+    <div class="card">
+        <h2>Start a Conversation</h2>
 
-    <script  src="scripts/axios.js"></script>
-    <script src="scripts/start_chat.js"></script>
+        <input id="otherEmail" type="email" placeholder="User Email">
+
+        <button onclick="startChat()">Start Chat</button>
+
+        <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+
+</div>
+
+<script defer src="scripts/axios.js"></script>
+<script defer src="scripts/start_chat.js"></script>
+
 </body>
 </html>

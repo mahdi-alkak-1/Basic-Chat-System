@@ -1,37 +1,37 @@
 async function login() {
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
-    const error = document.getElementById("error");
-
-    error.innerText = "";  // clear errors
 
     if (!email || !password) {
-        error.innerText = "All fields required.";
-        return;
+        return alert("Please fill all fields");
     }
-    
 
     try {
-        const response = await axios.post("../backend/auth/login.php",
-            {   email: email,
-                password: password ,
+        const resp = await axios.post(
+            "../Backend/public/index.php?route=/auth/login",
+            { email,
+             password,
             },
             {
-                headers: { 'Content-Type': 'application/json'},
+                headers: { 'X-Auth-Token': localStorage.getItem('token') },
             }
+
         );
 
-        const userData  = response.data.data;
-        if (response.data.status === 200) {
-            localStorage.setItem("user_id", userData.id)
-            localStorage.setItem("token", userData.token);
-            window.location.href = "chat.html";
+        if (resp.data.status === 200) {
+            const user = resp.data.data;
+
+            localStorage.setItem("token", user.token);
+            localStorage.setItem("user_id", user.id);
+            localStorage.setItem("email", user.email);
+
+            window.location.href = "start_chat.html";
         } else {
-            error.innerText = response.data.message;
+            alert(resp.data.message);
         }
 
-    } catch (err) {
-        error.innerText = "Server error.";
-        console.log(err);
+    } catch (error) {
+        console.log(error);
+        alert("Server error");
     }
 }

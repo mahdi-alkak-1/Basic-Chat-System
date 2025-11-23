@@ -6,36 +6,52 @@
     <link rel="stylesheet" href="style/chat.css">
     <title>Chat</title>
 </head>
-
 <body>
 
-<div id="chat-container">
+<div class="chat-container">
 
-    <!-- HEADER -->
-    <div id="chat-header">
-        <span id="chat-with">Chat</span>
-        
-        
-        <div id="header-buttons">
-            <button onclick="changeChat()" class="header-btn">Change Chat</button>
-            <button onclick="refreshChat()" class="header-btn">Refresh</button>
-            <button onclick="logout()" class="header-btn">Logout</button>
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="profile-box">
+            <div class="avatar"></div>
+            <div class="profile-info">
+                <span id="my-email">Loading...</span>
+            </div>
         </div>
-    </div>
 
-    <!-- MESSAGES -->
-    <div id="messages-box">
+        <div class="sidebar-title">Conversations</div>
+        <div id="conversation-list" class="conversation-list">
+            <!-- Conversations will be inserted here -->
+        </div>
 
-    </div>
+        <button class="start-chat-btn" onclick="startNewChat()">➕ Start New Chat</button>
+        <button class="logout-btn" onclick="logout()">Logout</button>
 
-    <!-- INPUT -->
-    <div id="input-area">
-        <input type="text" id="messageInput" placeholder="Type a message...">
-        <button onclick="sendMessage()">Send</button>
-    </div>
+    </aside>
+
+    <!-- RIGHT CHAT PANEL -->
+    <main class="chat-panel">
+
+        <div class="chat-header">
+            <h3 id="chat-with">Select a conversation</h3>
+            <span id="status-indicator"></span>
+        </div>
+
+        <div id="messages-box" class="chat-box">
+            <!-- Messages will load here -->
+        </div>
+
+        <div class="message-input-area">
+            <input id="messageInput" placeholder="Write a message...">
+            <button class="send-btn" onclick="sendMessage()">Send</button>
+        </div>
+
+    </main>
 
 </div>
-    <script  src="scripts/axios.js"></script>
-    <script src="scripts/chat.js"></script>
+
+<script defer src="scripts/axios.js"></script>
+<script defer src="scripts/chat.js"></script>
 </body>
 </html>
