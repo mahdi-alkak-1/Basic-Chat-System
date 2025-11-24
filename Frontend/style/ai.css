@@ -1,0 +1,38 @@
+.ai-btn {
+    margin: 10px;
+    padding: 10px 16px;
+    background: #5865F2;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    width: 140px;
+}
+
+.ai-btn:hover {
+    background: #4752C4;
+}
+
+.ai-panel {
+    background: #2f3136;
+    color: #f1f1f1;
+    border-left: 3px solid #5865F2;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+}
+
+.ai-panel h4 {
+    margin: 0 0 5px 0;
+}
+
+.ai-panel button {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: #202225;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
