@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../services/AuthService.php';
+require_once __DIR__ . '/../services/MessageService.php';
 require_once __DIR__ . '/../services/ResponseService.php';
 require_once __DIR__ . '/../models/Message.php';
 
@@ -42,18 +43,8 @@ class MessageController {
         $messages = Message::getMessages($connection, $conversationId);
 
             // 2️⃣ Count unread messages (only messages NOT sent by current user)
-        $sql1 = "
-            SELECT COUNT(*) AS unread
-            FROM messages
-            WHERE conversation_id = ?
-            AND sender_id != ?
-            AND read_at IS NULL
-        ";
-        $query = $connection->prepare($sql1);
-        $query ->bind_param('ii', $conversationId, $userId);
-        $query ->execute();
-        $unread = $query->get_result()->fetch_assoc()['unread'];
-
+     
+        $unread = MessageService::CountUnreadMessages($connection,$conversationId,$userId);
 
         return ResponseService::response(200, "Messages loaded", [
             "messages" => array_map(fn($m) => [

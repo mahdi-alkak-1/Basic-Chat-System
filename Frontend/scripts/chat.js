@@ -59,7 +59,7 @@ async function loadMessages() {
         );
 
         if (resp.data.status !== 200) return;
-
+        console.log("load messages",conversationId);
         messagesBox.innerHTML = "";
         console.log("response in loadMessages",resp.data.data.messages);
         resp.data.data.messages.forEach(msg => {
@@ -81,7 +81,7 @@ function selectConversation(id, email) {
     localStorage.setItem("conversation_id", id);
 
     chatWith.innerText = email;
-
+    
     loadMessages();
     loadConversations();
 }
@@ -110,27 +110,27 @@ async function sendMessage() {
     }
 }
 
-function displayMessage(text, sender, msg = null) {
-    const bubble = document.createElement("div");
-    bubble.className = "bubble " + sender;
+    function displayMessage(text, sender, msg = null) {
+        const bubble = document.createElement("div");
+        bubble.className = "bubble " + sender;
+        
+        bubble.innerText = text;
 
-    bubble.innerText = text;
+        // Add ticks only for messages YOU sent
+        if (sender === "me") {
+            const tick = document.createElement("div");
+            tick.className = "tick";
 
-    // Add ticks only for messages YOU sent
-    if (sender === "me") {
-        const tick = document.createElement("div");
-        tick.className = "tick";
+            if (msg?.read_at) tick.innerHTML = "✔✔";          // read
+            else if (msg?.delivered_at) tick.innerHTML = "✔✔"; // delivered
+            else tick.innerHTML = "✔";                         // sent
 
-        if (msg?.read_at) tick.innerHTML = "✔✔";          // read
-        else if (msg?.delivered_at) tick.innerHTML = "✔✔"; // delivered
-        else tick.innerHTML = "✔";                         // sent
+            bubble.appendChild(tick);
+        }
 
-        bubble.appendChild(tick);
+        messagesBox.appendChild(bubble);
+        messagesBox.scrollTop = messagesBox.scrollHeight;
     }
-
-    messagesBox.appendChild(bubble);
-    messagesBox.scrollTop = messagesBox.scrollHeight;
-}
 
 
 // MARK DELIVERED + READ
