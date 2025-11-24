@@ -1,7 +1,7 @@
 // AI CATCH UP FOR START_CHAT.HTML
 async function getAICatchUp() {
     const email = document.getElementById("otherEmail").value.trim();
-    if (!email) return alert("Enter an email first.");
+    if (!email) return notify("Enter an email first.","error");
 
     try {
         const resp = await axios.post(
@@ -13,18 +13,29 @@ async function getAICatchUp() {
         const data = resp.data.data;
 
         if (!data.show_summary) {
-            alert(data.summary);
+            notify(data.summary,"error");
             return;
         }
 
-        alert("AI Summary:\n\n" + data.summary);
+        showAIPopup(data.summary);
 
     } catch (error) {
         console.log("AI error:", error);
-        alert("AI Error");
+        notify("AI Error","error");
     }
 }
+//-----------------------for POPUP--------------------------
+function showAIPopup(text) {
+    document.getElementById("aiPopupContent").innerText = text;
+    document.getElementById("aiPopup").classList.remove("hidden");
+    document.getElementById("aiPopupOverlay").classList.remove("hidden");
+}
 
+function closeAIPopup() {
+    document.getElementById("aiPopup").classList.add("hidden");
+    document.getElementById("aiPopupOverlay").classList.add("hidden");
+}
+//---------------------------------------------------------
 // USED ONLY IN chat.html
 function closeAISummary() {
     const panel = document.getElementById("ai-panel");

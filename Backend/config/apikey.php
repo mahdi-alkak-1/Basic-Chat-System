@@ -1,0 +1,4 @@
+<?php
+
+const OPENAI_API_KEY = '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';
+?>
