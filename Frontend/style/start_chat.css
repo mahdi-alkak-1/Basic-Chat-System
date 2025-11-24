@@ -59,3 +59,63 @@ body {
 .logout-btn:hover {
     background: #cc4444 !important;
 }
+/* ================================popup========================== */
+
+/* Popup overlay */
+.ai-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.55);
+    z-index: 999;
+}
+
+/* Popup box */
+.ai-popup {
+    position: fixed;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 450px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    z-index: 1000;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+    animation: fadeDown .25s ease;
+}
+
+@keyframes fadeDown {
+    from { opacity: 0; transform: translate(-50%, -20px); }
+    to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+.ai-popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ai-popup-header h3 {
+    margin: 0;
+}
+
+.ai-popup-close {
+    font-size: 22px;
+    cursor: pointer;
+    color: #444;
+}
+
+.ai-popup-content {
+    margin-top: 15px;
+    white-space: pre-wrap;
+    line-height: 1.5;
+    font-size: 15px;
+}
+
+.hidden {
+    display: none;
+}
+

@@ -3,7 +3,7 @@ async function login() {
     const password = document.getElementById("password").value.trim();
 
     if (!email || !password) {
-        return alert("Please fill all fields");
+        return notify("Please fill all fields", "error");
     }
 
     try {
@@ -27,11 +27,11 @@ async function login() {
 
             window.location.href = "start_chat.html";
         } else {
-            alert(resp.data.message);
+            notify(resp.data.message,"error");
         }
 
     } catch (error) {
         console.log(error);
-        alert("Server error");
+        notify("Server error","error");
     }
 }

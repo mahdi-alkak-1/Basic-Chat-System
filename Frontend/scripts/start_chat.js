@@ -4,8 +4,8 @@ if (!token) window.location.href = "login.html";
 // START CHAT
 async function startChat() {
     const email = document.getElementById("otherEmail").value.trim();
-    if (!email) return alert("Enter an email");
-
+    if (!email) return notify("Enter an email","error");
+    // alert("Enter an email")
     try {
         const resp = await axios.post(
             "../Backend/public/index.php?route=/conversation/start",
@@ -19,14 +19,15 @@ async function startChat() {
             localStorage.setItem("conversation_id", cid);
             window.location.href = "chat.html";
         } else {
-            alert(resp.data.message);
+            notify(resp.data.message,"error");
         }
 
     } catch (error) {
         console.log(error);
-        alert("Server error");
+        notify("Server error", "error");
     }
 }
+
 
 // LOGOUT
 function logout() {

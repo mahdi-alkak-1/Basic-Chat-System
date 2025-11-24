@@ -182,7 +182,7 @@ async function startNewChat() {
 
     } catch (e) {
         console.log(e);
-        alert("Error starting chat");
+        notify("Error starting chat", "error");
     }
 }
 

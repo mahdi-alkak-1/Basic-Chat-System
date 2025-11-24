@@ -1,0 +1,26 @@
+.notify {
+    position: fixed;
+    top: 20px;
+
+    /* Center horizontally */
+    left: 50%;
+    transform: translate(-50%, -20px);
+
+    padding: 14px 20px;
+    background: #333;
+    color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    opacity: 0;
+    transition: opacity .3s, transform .3s;
+    z-index: 9999;
+}
+
+.notify.show {
+    opacity: 1;
+    transform: translate(-50%, 0); /* slide down from center */
+}
+
+.hidden {
+    display: none;
+}

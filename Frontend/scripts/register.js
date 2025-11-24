@@ -3,7 +3,7 @@ async function registerUser() {
     const password = document.getElementById("password").value.trim();
 
     if (!email || !password) {
-        return alert("Please fill all fields");
+        return notify("Please fill all fields","error");
     }
 
     try {
@@ -13,14 +13,14 @@ async function registerUser() {
         );
 
         if (resp.data.status === 200) {
-            alert("Account created! Login now.");
+            notify("Account created! Login now.","success");
             window.location.href = "login.html";
         } else {
-            alert(resp.data.message);
+            notify(resp.data.message,"error");
         }
 
     } catch (error) {
         console.log(error);
-        alert("Server error");
+        notify("Server error","error");
     }
 }
