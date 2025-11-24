@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style/chat.css">
+    <link rel="stylesheet" href="style/ai.css">
     <title>Chat</title>
 </head>
 <body>
@@ -21,9 +22,7 @@
         </div>
 
         <div class="sidebar-title">Conversations</div>
-        <div id="conversation-list" class="conversation-list">
-            <!-- Conversations will be inserted here -->
-        </div>
+        <div id="conversation-list" class="conversation-list"></div>
 
         <button class="start-chat-btn" onclick="startNewChat()">➕ Start New Chat</button>
         <button class="logout-btn" onclick="logout()">Logout</button>
@@ -35,13 +34,12 @@
 
         <div class="chat-header">
             <h3 id="chat-with">Select a conversation</h3>
-            <span id="status-indicator"></span>
         </div>
 
-        <div id="messages-box" class="chat-box">
-            <!-- Messages will load here -->
-        </div>
+        <div id="messages-box" class="chat-box"></div>
 
+
+        <!-- MESSAGE INPUT -->
         <div class="message-input-area">
             <input id="messageInput" placeholder="Write a message...">
             <button class="send-btn" onclick="sendMessage()">Send</button>
@@ -53,5 +51,7 @@
 
 <script defer src="scripts/axios.js"></script>
 <script defer src="scripts/chat.js"></script>
+<script defer src="scripts/ai.js"></script>
+
 </body>
 </html>

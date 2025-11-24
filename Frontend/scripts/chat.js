@@ -1,6 +1,5 @@
-// ===============================
+
 // AUTH CHECK
-// ===============================
 const token = localStorage.getItem("token");
 if (!token) window.location.href = "login.html";
 
@@ -11,25 +10,23 @@ let currentUserId = localStorage.getItem("user_id");
 const messagesBox = document.getElementById("messages-box");
 const chatWith = document.getElementById("chat-with");
 const conversationList = document.getElementById("conversation-list");
+//Ai DOM
+const aiBtn = document.getElementById("ai-summary-btn");
+const aiPanel = document.getElementById("ai-panel");        
+const aiOutput = document.getElementById("ai-output");      
 
-
-// ===============================
 // LOAD USER EMAIL
-// ===============================
 document.getElementById("my-email").innerText = localStorage.getItem("email") || "";
 
 
-// ===============================
 // LOAD ALL CONVERSATIONS
-// ===============================
-// ⚠️ Only call /conversation/list IF you add it in routes
 async function loadConversations() {
     try {
         const resp = await axios.get(
             "../Backend/public/index.php?route=/conversation/list",
             { headers: { "X-Auth-Token": token } }
         );
-
+        console.log("am inside loadConversation",resp.data.data.conversations);//id: 1, other_email: 'test1@gmail.com'//id: 2, other_email: 'mahdialkak1@gmail.com'
         if (resp.data.status !== 200) return;
 
         conversationList.innerHTML = "";
@@ -38,10 +35,9 @@ async function loadConversations() {
             const div = document.createElement("div");
             div.className = "conversation-item";
             if (conv.id == conversationId) div.classList.add("active-chat");
-
+            
             div.innerText = conv.other_email;
             div.onclick = () => selectConversation(conv.id, conv.other_email);
-
             conversationList.appendChild(div);
         });
 
@@ -51,28 +47,11 @@ async function loadConversations() {
 }
 
 
-// ===============================
-// SELECT CONVERSATION
-// ===============================
-function selectConversation(id, email) {
-    conversationId = id;
-    localStorage.setItem("conversation_id", id);
 
-    chatWith.innerText = email;
-
-    messagesBox.innerHTML = "";
-
-    loadMessages();
-    loadConversations();
-}
-
-
-// ===============================
 // LOAD MESSAGES
-// ===============================
 async function loadMessages() {
     if (!conversationId) return;
-
+    console.log("am inside loadMessages ,conv id:",conversationId);
     try {
         const resp = await axios.get(
             "../Backend/public/index.php?route=/messages/list&conversation_id=" + conversationId,
@@ -82,7 +61,7 @@ async function loadMessages() {
         if (resp.data.status !== 200) return;
 
         messagesBox.innerHTML = "";
-        console.log(resp.data.data.messages);
+        console.log("response in loadMessages",resp.data.data.messages);
         resp.data.data.messages.forEach(msg => {
             const sender = msg.sender_id == currentUserId ? "me" : "them";
             displayMessage(msg.text, sender, msg);
@@ -96,10 +75,20 @@ async function loadMessages() {
     }
 }
 
+function selectConversation(id, email) {
+    console.log("selectConversation called!", id, email);
+    conversationId = id;
+    localStorage.setItem("conversation_id", id);
 
-// ===============================
+    chatWith.innerText = email;
+
+    loadMessages();
+    loadConversations();
+}
+
+
+
 // SEND MESSAGE
-// ===============================
 async function sendMessage() {
     const text = document.getElementById("messageInput").value.trim();
     if (!text) return;
@@ -143,9 +132,8 @@ function displayMessage(text, sender, msg = null) {
     messagesBox.scrollTop = messagesBox.scrollHeight;
 }
 
-// ===============================
+
 // MARK DELIVERED + READ
-// ===============================
 async function markDelivered() {
     await axios.post(
         "../Backend/public/index.php?route=/messages/mark-delivered",
@@ -163,9 +151,8 @@ async function markRead() {
 }
 
 
-// ===============================
+
 // BUTTONS
-// ===============================
 async function refreshChat() {
     messagesBox.innerHTML = "";
     await loadMessages();
@@ -205,8 +192,6 @@ function logout() {
 }
 
 
-// ===============================
 // INITIAL LOAD
-// ===============================
 loadConversations();
 if (conversationId) loadMessages();

@@ -1,16 +1,7 @@
-// AUTH CHECK
 const token = localStorage.getItem("token");
 if (!token) window.location.href = "login.html";
 
-// Fix optional chaining error
-const myEmail = document.getElementById("my-email");
-if (myEmail) {
-    myEmail.innerText = localStorage.getItem("email");
-}
-
-// ------------------------------
 // START CHAT
-// ------------------------------
 async function startChat() {
     const email = document.getElementById("otherEmail").value.trim();
     if (!email) return alert("Enter an email");
@@ -22,6 +13,7 @@ async function startChat() {
             { headers: { "X-Auth-Token": token } }
         );
 
+        console.log("am in startchat: ",resp);//resp contain conversation id
         if (resp.data.status === 200) {
             const cid = resp.data.data.conversation_id;
             localStorage.setItem("conversation_id", cid);
@@ -36,9 +28,7 @@ async function startChat() {
     }
 }
 
-// ------------------------------
 // LOGOUT
-// ------------------------------
 function logout() {
     localStorage.clear();
     window.location.href = "login.html";

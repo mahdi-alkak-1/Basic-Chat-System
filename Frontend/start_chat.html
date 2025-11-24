@@ -15,7 +15,10 @@
 
         <input id="otherEmail" type="email" placeholder="User Email">
 
-        <button onclick="startChat()">Start Chat</button>
+        <button onclick="startChat()">Start Chat</button><br><br>
+
+        <!-- AI Catch-Up button -->
+        <button class="ai-btn" onclick="getAICatchUp()">AI Catch-Up</button>
 
         <button class="logout-btn" onclick="logout()">Logout</button>
     </div>
@@ -24,6 +27,7 @@
 
 <script defer src="scripts/axios.js"></script>
 <script defer src="scripts/start_chat.js"></script>
+<script defer src="scripts/ai.js"></script>
 
 </body>
 </html>
