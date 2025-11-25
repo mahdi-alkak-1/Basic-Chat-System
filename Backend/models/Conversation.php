@@ -34,7 +34,7 @@ class conversation extends Model{
             WHERE p1.user_id = ? AND p2.user_id = ?
             LIMIT 1
         ";
-
+        
         $q = $connection->prepare($sql);
         $q->bind_param("ii", $u1, $u2);
         $q->execute();

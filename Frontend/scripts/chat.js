@@ -67,8 +67,10 @@ async function loadMessages() {
             displayMessage(msg.text, sender, msg);
         });
 
-        markDelivered();
-        markRead();
+        await markDelivered();
+        setTimeout(() => {
+            markRead();
+        }, 1200);
 
     } catch (error) {
         console.log("Load messages error:", error);
@@ -79,7 +81,7 @@ function selectConversation(id, email) {
     console.log("selectConversation called!", id, email);
     conversationId = id;
     localStorage.setItem("conversation_id", id);
-
+    
     chatWith.innerText = email;
     
     loadMessages();
@@ -110,27 +112,35 @@ async function sendMessage() {
     }
 }
 
-    function displayMessage(text, sender, msg = null) {
-        const bubble = document.createElement("div");
-        bubble.className = "bubble " + sender;
-        
-        bubble.innerText = text;
+function displayMessage(text, sender, msg = null) {
+    const bubble = document.createElement("div");
+    bubble.className = "bubble " + sender;
+    bubble.innerText = text;
 
-        // Add ticks only for messages YOU sent
-        if (sender === "me") {
-            const tick = document.createElement("div");
-            tick.className = "tick";
+    // Only add ticks for messages YOU sent
+    if (sender === "me") {
+        const tick = document.createElement("span");
+        tick.classList.add("tick");
 
-            if (msg?.read_at) tick.innerHTML = "✔✔";          // read
-            else if (msg?.delivered_at) tick.innerHTML = "✔✔"; // delivered
-            else tick.innerHTML = "✔";                         // sent
+        if (msg?.read_at) {
+            tick.innerHTML = "✔✔";
+            tick.classList.add("read");
 
-            bubble.appendChild(tick);
+        } else if (msg?.delivered_at) {
+            tick.innerHTML = "✔✔";
+            tick.classList.add("delivered");
+
+        } else {
+            tick.innerHTML = "✔";
+            tick.classList.add("sent");
         }
 
-        messagesBox.appendChild(bubble);
-        messagesBox.scrollTop = messagesBox.scrollHeight;
+        bubble.appendChild(tick);
     }
+
+    messagesBox.appendChild(bubble);
+    messagesBox.scrollTop = messagesBox.scrollHeight;
+}
 
 
 // MARK DELIVERED + READ

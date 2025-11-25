@@ -44,6 +44,8 @@ class Message extends Model {
             VALUES (?, ?, ?, NOW())
         ";
 
+        
+
         $query = $connection->prepare($sql);
         $query->bind_param('iis', $conversationId, $senderId, $text);
 

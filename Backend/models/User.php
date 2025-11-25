@@ -17,7 +17,7 @@ class User extends Model{
         $this->email = $data["email"];
         $this->password = $data["password"];
         $this->auth_token = $data["auth_token"] ?? null;
-        $this->created_at = $data["created_at"];
+        $this->created_at = $data["created_at"];    
     }
     
     public static function findByEmail($connection, $email){
@@ -31,9 +31,6 @@ class User extends Model{
         return  $data ? new User($data) : null ;    
     }
     
-    // public static function updateToken(){  //// i may implement it later its impo for security issues
-
-    // }
 
 
     public function getId(){

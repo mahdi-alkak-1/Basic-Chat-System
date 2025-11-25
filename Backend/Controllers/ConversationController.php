@@ -37,7 +37,9 @@ class ConversationController {
 
         // Create new conversation
         $convId = ConversationService::CreateNewConv($connection);
-
+        if(!$convId){
+            return ResponseService::response(400, "Failed to Create Conversation");
+        }
         // Add participants
         ConversationService::AddParticipants($connection, $convId, $currentId,$otherId);
 
