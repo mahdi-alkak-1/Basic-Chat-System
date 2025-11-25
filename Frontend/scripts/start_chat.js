@@ -5,7 +5,7 @@ if (!token) window.location.href = "login.html";
 async function startChat() {
     const email = document.getElementById("otherEmail").value.trim();
     if (!email) return notify("Enter an email","error");
-    // alert("Enter an email")
+
     try {
         const resp = await axios.post(
             "../Backend/public/index.php?route=/conversation/start",
